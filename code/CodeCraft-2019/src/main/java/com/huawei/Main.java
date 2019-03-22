@@ -40,10 +40,6 @@ public class Main {
         readText(new File(roadPath),1);
         readText(new File(crossPath),2);
 
-
-
-
-
         // TODO: calc
         int len = crossList.size() + 1;
         //System.out.println(len);
@@ -55,14 +51,27 @@ public class Main {
                 map[road.getStart()][road.getEnd()] = road;
         }
         int ins = 0;
-        for(Car car : carList) {
+
+        while(carList.size() != 0)
+        {
+            int random = (int) (Math.random() * carList.size());
+            CalUtil calUtil = new CalUtil();
+            Car car = carList.get(random);
+            car.setTime(ins/seed + 1);
+            List<Integer> minPath = calUtil.getMinPath(map,car,len);
+            resList.add(minPath);
+            carList.remove(random);
+            ins++;
+        }
+/*        for(Car car : carList)
+        {
             CalUtil calUtil = new CalUtil();
             car.setTime(ins/seed + 1);
             List<Integer> minPath = calUtil.getMinPath(map,car,len);
             resList.add(minPath);
             ins++;
-        }
-
+        }*/
+        logger.info(ins);
 
         // TODO: write answer.txt
 
