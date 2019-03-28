@@ -119,7 +119,7 @@ public class CalUtil {
                 if(roadMap[i][j] != null)
                 {
                     int speed = getSpeed(car.getSpeed(),roadMap[i][j].getSpped());
-                    map[i][j] = roadMap[i][j].getLen()/speed;
+                    map[i][j] = roadMap[i][j].getLen()/speed + 1;
                 }
             }
 
@@ -151,12 +151,15 @@ public class CalUtil {
         }
 
         List<Integer> res = new ArrayList<>();
+        int cost = 0;
         for(int i=car.getEnd(); path[i] != i;)
         {
-            res.add(roadMap[i][path[i]].getId());
+            res.add(roadMap[path[i]][i].getId());
             //System.out.println(roadMap[i][path[i]].getId());
+            cost += map[path[i]][i];
             i = path[i];
         }
+        //System.out.println(cost);
         res.add(car.getTime());
         res.add(car.getId());
         Collections.reverse(res);

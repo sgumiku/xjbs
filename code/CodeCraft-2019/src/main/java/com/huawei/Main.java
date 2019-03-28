@@ -2,12 +2,15 @@ package com.huawei;
 
 import model.Car;
 import model.Cross;
+import model.Node;
 import model.Road;
 import org.apache.log4j.Logger;
 import util.CalUtil;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 
@@ -17,7 +20,7 @@ public class Main {
     private static List<Car> carList = new ArrayList<>();
     private static List<Cross> crossList = new ArrayList<>();
     private static List<List<Integer>> resList = new ArrayList<>();
-    private static int seed = 3;
+    private static int seed = 20;
     public static void main(String[] args)
     {
         if (args.length != 4) {
@@ -51,13 +54,23 @@ public class Main {
                 map[road.getStart()][road.getEnd()] = road;
         }
         int ins = 0;
+        System.setProperty("java.util.Arrays.useLegacyMergeSort", "true");
+        Collections.sort(carList,new CarComparator());
+        logger.info("max_speed: "+ carList.get(0).getSpeed());
+        logger.info("min_speed: " + carList.get(carList.size() - 1).getSpeed());
+
+
 
         while(carList.size() != 0)
         {
-            int random = (int) (Math.random() * carList.size());
+            int random = (int) (Math.random() * (carList.size()/5));
             CalUtil calUtil = new CalUtil();
             Car car = carList.get(random);
-            car.setTime(ins/seed + 1);
+            if(ins/seed + 1 >= car.getTime())
+                car.setTime(ins/seed + 1);
+            else
+                car.setTime(car.getTime() + (int)(Math.random()*5));
+
             List<Integer> minPath = calUtil.getMinPath(map,car,len);
             resList.add(minPath);
             carList.remove(random);
@@ -96,7 +109,7 @@ public class Main {
                     bw.write(String.valueOf(list.get(i)));
                     //System.out.println(list.get(i));
                     if(i != len-1)
-                        bw.write(" ");
+                        bw.write(", ");
                     else
                         bw.write(")");
                 }
@@ -151,4 +164,12 @@ public class Main {
         }
     }
 
+}
+class CarComparator implements Comparator<Car> {
+
+    @Override
+    public int compare(Car x, Car y) {
+
+        return x.getSpeed() > y.getSpeed() ? -1 : 1;
+    }
 }
